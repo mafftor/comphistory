@@ -25,7 +25,7 @@ export default function Home(){
         };
       
         axios
-            .post('localhost/submit', data)
+            .post('/api/submit', data)
             .then(response => {
             //   setTutorial({
             //     id: response.data.id,
