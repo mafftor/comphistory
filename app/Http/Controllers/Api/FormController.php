@@ -19,7 +19,26 @@ class FormController extends Controller
             'email' => ['required', 'email'],
         ]);
 
-        dd($validated);
+        $response = Http::withHeaders([
+            'X-RapidAPI-Key' => '',
+            'X-RapidAPI-Host' => ''
+        ])
+        ->get('', [
+            'symbol' => $validated['symbol'],
+            'region' => 'US',
+        ]);
+
+        $start_date = strtotime($validated['start_date']);
+        $end_date = strtotime($validated['end_date'] . '23:59:59');
+
+        $prices = collect($response->json()['prices']);
+        $prices = $prices->filter(function ($item) use ($start_date, $end_date) {
+            return $item['date'] >= $start_date && $item['date'] <= $end_date;
+        });
+
+        return [
+            'prices' => $prices,
+        ];
     }
 
     private function companySymbols(): Collection  {
