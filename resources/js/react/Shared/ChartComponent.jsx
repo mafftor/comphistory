@@ -33,6 +33,12 @@ export const ChartComponent = props => {
 					color: "rgba(256, 256, 256, 0.04)",
 					visible: true
 				},
+				rightPriceScale: {
+					visible: true,
+				},
+				leftPriceScale: {
+					visible: true,
+				},
 				width: chartContainerRef.current.clientWidth,
 				height: 300,
 			});
@@ -50,7 +56,7 @@ export const ChartComponent = props => {
 				priceFormat: {
 					type: 'volume',
 				},
-				priceScaleId: '',
+				priceScaleId: 'left',
 			});
 			newSeries.priceScale().applyOptions({
 				scaleMargins: {
