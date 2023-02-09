@@ -4,59 +4,31 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use App\Rules\Symbol;
-use Illuminate\Support\Collection;
+use App\Services\CompanySymbolService;
+use App\Services\HistoricalDataService;
 
 class FormController extends Controller
 {
+    public function __construct(
+        private CompanySymbolService $companySymbolService,
+        private HistoricalDataService $historicalDataService,
+    ) {}
+
     public function form(Request $request) {
         $validated = $request->validate([
-            'symbol' => ['required', new Symbol($this->companySymbols())],
+            'symbol' => ['required', new Symbol($this->companySymbolService->companySymbols())],
             'start_date' => ['required', 'date', 'before_or_equal:end_date', 'before_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date', 'before_or_equal:today'],
             'email' => ['required', 'email'],
         ]);
 
-        $response = Http::withHeaders([
-            'X-RapidAPI-Key' => env('RAPID_API_KEY'),
-            'X-RapidAPI-Host' => env('RAPID_HOST')
-        ])
-        ->get(env('RAPID_URL'), [
-            'symbol' => $validated['symbol'],
-            'region' => 'US',
-        ]);
-
-        $start_date = strtotime($validated['start_date']);
-        $end_date = strtotime($validated['end_date'] . '23:59:59');
-
-        $prices = collect($response->json()['prices']);
-        $prices = $prices->filter(function ($item) use ($start_date, $end_date) {
-            return !isset($item['type']) && ($item['date'] >= $start_date && $item['date'] <= $end_date);
-        });
-
-        $chart = $prices->sortBy('date');
-        $chart = $chart->map(function ($item) {
-            $item['time'] = date('Y-m-d', $item['date']);
-            $item['value'] = $item['volume'];
-            $item['color'] = $item['open'] > $item['close'] ? '#f6465d': '#0ecb81';
-            unset($item['date'], $item['volume']);
-
-            return $item;
-        });
+        // Fetch and filter the historical data
+        $this->historicalDataService->fetch($validated['symbol'])
+            ->filterWithDates(strtotime($validated['start_date']), strtotime($validated['end_date'] . '23:59:59'));
 
         return [
-            'prices' => $prices,
-            'chart' => $chart->values()->all(),
+            'prices' => $this->historicalDataService->getPricesData(),
         ];
-    }
-
-    private function companySymbols(): Collection  {
-        return Cache::rememberForever('companySymbols', function () {
-            $response = Http::get(env('COMPANY_SYMBOLS_URL'));
-
-            return $response->collect()->pluck('Symbol');
-        });
     }
 }

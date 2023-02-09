@@ -12,7 +12,6 @@ export default function Home(){
 
     const [form, setForm] = React.useState(initialFormState);
     const [prices, setPrices] = React.useState([]);
-    const [chart, setChart] = React.useState([]);
 
     const handleInputChange = event => {
         const { name, value } = event.target;
@@ -31,7 +30,6 @@ export default function Home(){
             .post('/api/submit', data)
             .then(response => {
                 setPrices(response.data.prices);
-                setChart(response.data.chart);
             })
             .catch(e => {
               console.log(e);
@@ -86,7 +84,7 @@ export default function Home(){
                 </div>
             </div>
 
-            <ChartComponent data={chart}></ChartComponent>
+            <ChartComponent data={prices}></ChartComponent>
 
             <table>
                 <thead>
