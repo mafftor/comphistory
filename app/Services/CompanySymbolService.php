@@ -7,11 +7,23 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class CompanySymbolService {
-    public function companySymbols(): Collection  {
-        return Cache::rememberForever('companySymbols', function () {
+    static $data;
+
+    public function fetch(): CompanySymbolService {
+        self::$data = Cache::rememberForever('companySymbols', function () {
             $response = Http::get(env('COMPANY_SYMBOLS_URL'));
 
-            return $response->collect()->pluck('Symbol');
+            return $response->collect()->keyBy('Symbol');
         });
+
+        return $this;
+    }
+
+    public function getCompanySymbols(): Collection  {
+        return self::$data->pluck('Symbol');
+    }
+
+    public function getCompany(string $symbol): array  {
+        return self::$data->get($symbol);
     }
 }

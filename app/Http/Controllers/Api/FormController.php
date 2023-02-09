@@ -19,7 +19,7 @@ class FormController extends Controller
 
     public function form(Request $request) {
         $validated = $request->validate([
-            'symbol' => ['required', new Symbol($this->companySymbolService->companySymbols())],
+            'symbol' => ['required', new Symbol($this->companySymbolService->fetch()->getCompanySymbols())],
             'start_date' => ['required', 'date', 'before_or_equal:end_date', 'before_or_equal:today'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date', 'before_or_equal:today'],
             'email' => ['required', 'email'],
@@ -29,7 +29,8 @@ class FormController extends Controller
         $this->historicalDataService->fetch($validated['symbol'])
             ->filterWithDates(strtotime($validated['start_date']), strtotime($validated['end_date'] . '23:59:59'));
 
-        Mail::to($validated['email'])->send(new FormSubmitted($validated));
+        // Send an email about form is submitted
+        Mail::to($validated['email'])->send(new FormSubmitted($validated, $this->companySymbolService));
 
         return [
             'prices' => $this->historicalDataService->getPricesData(),

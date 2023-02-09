@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Services\CompanySymbolService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -18,10 +19,10 @@ class FormSubmitted extends Mailable
      *
      * @return void
      */
-    public function __construct(private array $data)
-    {
-        //
-    }
+    public function __construct(
+        private array $data, 
+        private CompanySymbolService $companySymbolService,
+    ) {}
 
     /**
      * Get the message envelope.
@@ -30,8 +31,10 @@ class FormSubmitted extends Mailable
      */
     public function envelope()
     {
+        $companyData = $this->companySymbolService->fetch()->getCompany($this->data['symbol']);
+
         return new Envelope(
-            subject: "The submitted Company Symbol = {$this->data['symbol']} => Company’s Name = Google",
+            subject: "The submitted Company Symbol = {$this->data['symbol']} => Company’s Name = " . $companyData['Company Name'],
         );
     }
 
@@ -44,6 +47,9 @@ class FormSubmitted extends Mailable
     {
         return new Content(
             view: 'mail.form_submitted',
+            with: [
+                'data' => $this->data,
+            ],
         );
     }
 

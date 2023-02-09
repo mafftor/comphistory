@@ -35,8 +35,8 @@ export default function Home(){
 
         let data = {
             symbol: form.symbol,
-            start_date: form.start_date.toLocaleDateString(),
-            end_date: form.end_date.toLocaleDateString(),
+            start_date: form.start_date.toLocaleDateString('uk-UA'),
+            end_date: form.end_date.toLocaleDateString('uk-UA'),
             email: form.email
         };
       
