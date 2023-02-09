@@ -8,8 +8,9 @@
 
         @viteReactRefresh
         @vite('resources/js/react/App.jsx')
+        @vite('resources/css/app.css')
     </head>
-    <body>
+    <body class="dark:bg-gray-800">
         <div id="app"></div>
     </body>
 </html>
