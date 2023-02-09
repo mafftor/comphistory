@@ -20,10 +20,10 @@ class FormController extends Controller
         ]);
 
         $response = Http::withHeaders([
-            'X-RapidAPI-Key' => '',
-            'X-RapidAPI-Host' => ''
+            'X-RapidAPI-Key' => env('RAPID_API_KEY'),
+            'X-RapidAPI-Host' => env('RAPID_HOST')
         ])
-        ->get('', [
+        ->get(env('RAPID_URL'), [
             'symbol' => $validated['symbol'],
             'region' => 'US',
         ]);
@@ -54,7 +54,7 @@ class FormController extends Controller
 
     private function companySymbols(): Collection  {
         return Cache::rememberForever('companySymbols', function () {
-            $response = Http::get('https://pkgstore.datahub.io/core/nasdaq-listings/nasdaq-listed_json/data/a5bc7580d6176d60ac0b2142ca8d7df6/nasdaq-listed_json.json');
+            $response = Http::get(env('COMPANY_SYMBOLS_URL'));
 
             return $response->collect()->pluck('Symbol');
         });
