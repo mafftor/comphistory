@@ -85,6 +85,9 @@ export default function Home(){
                     <button onClick={sendRequest}>Submit!</button>
                 </div>
             </div>
+
+            <ChartComponent data={chart}></ChartComponent>
+
             <table>
                 <thead>
                 <tr>
@@ -97,7 +100,7 @@ export default function Home(){
                 </tr>
                 </thead>
                 <tbody>
-                {/* {prices && 
+                {prices && 
                     prices.map((price, index) => (
                         <tr key={index}>
                             <td>{price.time}</td>
@@ -107,11 +110,9 @@ export default function Home(){
                             <td>{price.close}</td>
                             <td>{price.volume}</td>
                         </tr>
-                    ))} */}
+                    ))}
                 </tbody>
             </table>
-
-            <ChartComponent data={chart}></ChartComponent>
         </div>
     );
 }
