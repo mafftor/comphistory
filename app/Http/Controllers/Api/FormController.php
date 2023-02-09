@@ -33,11 +33,22 @@ class FormController extends Controller
 
         $prices = collect($response->json()['prices']);
         $prices = $prices->filter(function ($item) use ($start_date, $end_date) {
-            return $item['date'] >= $start_date && $item['date'] <= $end_date;
+            return !isset($item['type']) && ($item['date'] >= $start_date && $item['date'] <= $end_date);
+        });
+
+        $chart = $prices->sortBy('date');
+        $chart = $chart->map(function ($item) {
+            $item['time'] = date('Y-m-d', $item['date']);
+            $item['value'] = $item['volume'];
+            $item['color'] = $item['open'] > $item['close'] ? '#f6465d': '#0ecb81';
+            unset($item['date'], $item['volume']);
+
+            return $item;
         });
 
         return [
             'prices' => $prices,
+            'chart' => $chart->values()->all(),
         ];
     }
 
