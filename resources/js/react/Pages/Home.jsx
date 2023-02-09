@@ -84,6 +84,9 @@ export default function Home(){
                         dateFormat="dd.MM.yyyy"
                         maxDate={form.end_date}
                         onChange={(date) => setForm({...form, start_date: date})}
+                        onChangeRaw={(e) => {
+                            e.preventDefault();
+                        }}
                     />
                     {displayErrors('start_date')}
                 </div>
@@ -100,6 +103,9 @@ export default function Home(){
                         minDate={form.start_date}
                         dateFormat="dd.MM.yyyy"
                         onChange={(date) => setForm({...form, end_date: date})}
+                        onChangeRaw={(e) => {
+                            e.preventDefault();
+                        }}
                     />
                     {displayErrors('end_date')}
                 </div>
