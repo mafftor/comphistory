@@ -22,7 +22,7 @@ class Symbol implements InvokableRule
     public function __invoke($attribute, $value, $fail)
     {
         if (!$this->symbols->contains(strtoupper($value))) {
-            $fail('The :attribute does not exist.');
+            $fail('Entered :attribute does not exist.');
         }
     }
 }
