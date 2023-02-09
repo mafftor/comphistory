@@ -11,7 +11,7 @@ class CompanySymbolService {
 
     public function fetch(): CompanySymbolService {
         self::$data = Cache::rememberForever('companySymbols', function () {
-            $response = Http::get(env('COMPANY_SYMBOLS_URL'));
+            $response = Http::timeout(30)->get(env('COMPANY_SYMBOLS_URL'));
 
             return $response->collect()->keyBy('Symbol');
         });
