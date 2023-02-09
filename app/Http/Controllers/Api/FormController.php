@@ -7,6 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Rules\Symbol;
 use App\Services\CompanySymbolService;
 use App\Services\HistoricalDataService;
+use App\Mail\FormSubmitted;
+use Illuminate\Support\Facades\Mail;
 
 class FormController extends Controller
 {
@@ -26,6 +28,8 @@ class FormController extends Controller
         // Fetch and filter the historical data
         $this->historicalDataService->fetch($validated['symbol'])
             ->filterWithDates(strtotime($validated['start_date']), strtotime($validated['end_date'] . '23:59:59'));
+
+        Mail::to($validated['email'])->send(new FormSubmitted($validated));
 
         return [
             'prices' => $this->historicalDataService->getPricesData(),
