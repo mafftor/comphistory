@@ -1,8 +1,8 @@
-import { createChart, ColorType } from 'lightweight-charts';
+import { createChart, ColorType, CrosshairMode } from 'lightweight-charts';
 import React, { useEffect, useRef } from 'react';
 
 export const ChartComponent = props => {
-	const { data } = props;
+	const { data, watermark } = props;
 	const chartContainerRef = useRef();
 
 	useEffect(
@@ -13,20 +13,31 @@ export const ChartComponent = props => {
 
 			const chart = createChart(chartContainerRef.current, {
 				layout: {
-					background: { type: ColorType.Solid, color: '#161a1e' }, // lines color #25293080
-					textColor: 'black',
+					background: { type: ColorType.Solid, color: '#161a1e' },
+					textColor: '#848e9c',
+				},
+				grid: {
+					vertLines: {
+					  color: "#21252c"
+					},
+					horzLines: {
+					  color: "#21252c"
+					}
+				},
+				crosshair: {
+					mode: CrosshairMode.Normal
+				},
+				watermark: {
+					text: watermark,
+					fontSize: 128,
+					color: "rgba(256, 256, 256, 0.04)",
+					visible: true
 				},
 				width: chartContainerRef.current.clientWidth,
 				height: 300,
 			});
 
-			const mainSeries = chart.addCandlestickSeries({
-				upColor: '#0ecb81', 
-				downColor: '#f6465d', 
-				borderVisible: false,
-				wickUpColor: '#0ecb81', 
-				wickDownColor: '#f6465d',
-			});
+			const mainSeries = chart.addCandlestickSeries();
 			mainSeries.priceScale().applyOptions({
 				scaleMargins: {
 					top: 0.1,
@@ -36,7 +47,6 @@ export const ChartComponent = props => {
 			mainSeries.setData(data);
 
 			const newSeries = chart.addHistogramSeries({  
-				// color: '#26a69a',
 				priceFormat: {
 					type: 'volume',
 				},
@@ -53,14 +63,13 @@ export const ChartComponent = props => {
 			chart.timeScale().fitContent();
 
 			window.addEventListener('resize', handleResize);
-
 			return () => {
 				window.removeEventListener('resize', handleResize);
 
 				chart.remove();
 			};
 		},
-		[data]
+		[data, watermark]
 	);
 
 	return (

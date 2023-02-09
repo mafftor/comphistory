@@ -29,6 +29,7 @@ class FormController extends Controller
 
         return [
             'prices' => $this->historicalDataService->getPricesData(),
+            'symbol' => strtoupper($validated['symbol']),
         ];
     }
 }

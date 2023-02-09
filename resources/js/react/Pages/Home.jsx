@@ -4,14 +4,15 @@ import { ChartComponent } from '../Shared/ChartComponent';
 
 export default function Home(){
     const initialFormState = {
-        symbol: "goog",
-        start_date: "01.02.2023",
+        symbol: "GOOG",
+        start_date: "01.01.2023",
         end_date: "08.02.2023",
         email: "test@test"
     };
 
     const [form, setForm] = React.useState(initialFormState);
     const [prices, setPrices] = React.useState([]);
+    const [watermark, setWatermark] = React.useState("Please start searching...");
 
     const handleInputChange = event => {
         const { name, value } = event.target;
@@ -30,6 +31,7 @@ export default function Home(){
             .post('/api/submit', data)
             .then(response => {
                 setPrices(response.data.prices);
+                setWatermark(response.data.symbol)
             })
             .catch(e => {
               console.log(e);
@@ -84,7 +86,7 @@ export default function Home(){
                 </div>
             </div>
 
-            <ChartComponent data={prices}></ChartComponent>
+            <ChartComponent data={prices} watermark={watermark}></ChartComponent>
 
             <table>
                 <thead>
@@ -101,12 +103,12 @@ export default function Home(){
                 {prices && 
                     prices.map((price, index) => (
                         <tr key={index}>
-                            <td>{price.time}</td>
+                            <td>{new Date(price.time * 1000).toDateString()}</td>
                             <td>{price.open}</td>
                             <td>{price.high}</td>
                             <td>{price.low}</td>
                             <td>{price.close}</td>
-                            <td>{price.volume}</td>
+                            <td>{price.value}</td>
                         </tr>
                     ))}
                 </tbody>

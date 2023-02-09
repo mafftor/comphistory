@@ -37,7 +37,7 @@ class HistoricalDataService {
     {
         $chart = $this->prices->sortBy('date');
         $chart = $chart->map(function ($item) {
-            $item['time'] = date('Y-m-d', $item['date']);
+            $item['time'] = $item['date'];
             $item['value'] = $item['volume'];
             $item['color'] = $item['open'] > $item['close'] ? '#f6465d': '#0ecb81';
             unset($item['date'], $item['volume']);
