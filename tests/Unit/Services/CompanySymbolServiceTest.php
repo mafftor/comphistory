@@ -14,9 +14,9 @@ class CompanySymbolServiceTest extends TestCase
      */
     public function test_that_fetch_is_successful($expectedResult)
     {
-        Cache::shouldReceive('rememberForever')
+        Cache::shouldReceive('remember')
                     ->once()
-                    ->with('companySymbols', \Closure::class)
+                    ->with('companySymbols', 24*60*60, \Closure::class)
                     ->andReturn($expectedResult);
 
         $service = new CompanySymbolService();
@@ -33,9 +33,9 @@ class CompanySymbolServiceTest extends TestCase
     {
         $expectedResult = collect(['GOOG', 'AAIT']);
 
-        Cache::shouldReceive('rememberForever')
+        Cache::shouldReceive('remember')
                     ->once()
-                    ->with('companySymbols', \Closure::class)
+                    ->with('companySymbols', 24*60*60, \Closure::class)
                     ->andReturn($data);
 
         $service = new CompanySymbolService();
@@ -52,9 +52,9 @@ class CompanySymbolServiceTest extends TestCase
     {
         $symbol = 'GOOG';
 
-        Cache::shouldReceive('rememberForever')
+        Cache::shouldReceive('remember')
                     ->once()
-                    ->with('companySymbols', \Closure::class)
+                    ->with('companySymbols', 24*60*60, \Closure::class)
                     ->andReturn($data);
 
         $service = new CompanySymbolService();
